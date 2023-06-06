@@ -70,17 +70,10 @@ class Downloader:
         downloading = True
         while downloading:
             # todo: add a way to not download recent videos to prevent videos in progress
-            dateStart = datetime.utcfromtimestamp(int(self.startTime)).strftime(
-                "%Y-%m-%d %H_%M_%S"
-            )
-            dateEnd = datetime.utcfromtimestamp(int(self.endTime)).strftime(
-                "%Y-%m-%d %H_%M_%S"
-            )
-            segmentLength = self.endTime - self.startTime
             if self.fileName is None:
-                fileName = (
-                    self.outputDirectory + str(dateStart) + "-" + dateEnd + ".mp4"
-                )
+                dateStart = datetime.utcfromtimestamp(int(self.startTime)).strftime("%Y%m%d_%H%M%S")
+                dateEnd = datetime.utcfromtimestamp(int(self.endTime)).strftime("%H%M%S")
+                fileName = (self.outputDirectory + dateStart + "-" + dateEnd + ".mp4")
             else:
                 fileName = self.outputDirectory + self.fileName
             if self.scriptStartTime - self.FRESH_RECORDING_TIME_SECONDS < self.endTime:
@@ -132,6 +125,7 @@ class Downloader:
                     else:
                         currentAction = "Downloading"
                     downloadedFull = False
+                    segmentLength = self.endTime - self.startTime
                     async for resp in mediaSession.transceive(payload):
                         if resp.mimetype == "video/mp2t":
                             dataChunks += 1
